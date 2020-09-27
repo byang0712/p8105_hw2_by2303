@@ -9,7 +9,7 @@ library(tidyverse)
 library(readxl)
 ```
 
-## Problem  1
+## Problem 1
 
 Read the Mr. Trashwheel dataset.
 
@@ -70,3 +70,62 @@ left_join(precip_df, month_df, by = "month")
 This is dataset contains information from Mr. Trashwheel trash collector in Baltimore, MD. As trash enters the inner harbor, the trashweel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, include some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` rows in our final dataset. Additional data sheets include month precipitation data.  
 
 ## Problem 2
+
+Read the NYC Transit Subway Entrance And Exit Data
+
+```{r}
+nyc_subway_df <- 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", 
+           skip = 1) %>% 
+  janitor::clean_names() %>% 
+  select(line: entry, vending, ada) %>% 
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE ))
+```
+This data set contains information related to subway station in NYC, including line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance. To clean the data, 
+
+The number of distinct stations.
+
+```{r}
+nyc_subway_df %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+The number of ADA compliant stations. 
+
+```{r}
+nyc_subway_df %>% 
+  filter(ada == TRUE) %>% 
+  nrow()
+```
+
+The proportion of station entrances without vending allow entrance. 
+
+```{r}
+nyc_subway_df %>% 
+  filter(entry == TRUE, vending == "NO") %>% 
+  nrow() / nrow(nyc_subway_df)
+```
+
+Reformat the dataset. 
+
+```{r}
+nyc_subway_df <- 
+  nyc_subway_df %>% 
+  mutate(across(contains("route"), as.character))
+```
+
+```{r}
+nyc_subway_tidy_df <- 
+  pivot_longer(
+    nyc_subway_df,
+    route1:route11,
+    names_to = "route_number",
+    names_prefix = "route",
+    values_to = "route_name"
+  )
+```
+
+
+
+## Problem 3 
