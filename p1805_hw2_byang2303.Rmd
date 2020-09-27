@@ -81,7 +81,7 @@ nyc_subway_df <-
   select(line: entry, vending, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE ))
 ```
-This data set contains information related to subway station in NYC, including line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, exit, ADA compliance, staffing, staff hours, and entrance location. As a start, I cleaned the variables names, selected interested variables and changed the "entry" from character to logical type. After these steps, the resulting dataset has `r nrow(nyc_subway_df)` rows, and `r ncol(nyc_subway_df)` columns. 
+This data set contains information related to subway station in NYC, including line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, exit, ADA compliance, staffing, staff hours, and entrance location. As a start, I cleaned the variables names, selected interested variables and changed the "entry" from character to logical type. After these steps, the resulting dataset has `r nrow(nyc_subway_df)` rows, and `r ncol(nyc_subway_df)` columns. The data however is not yet tidy. For next steps, I want to merge the route variables into one single column. 
 
 The number of distinct stations.
 
@@ -126,6 +126,77 @@ nyc_subway_tidy_df <-
   )
 ```
 
+The number of distinct stations.
 
+```{r}
+nyc_subway_tidy_df %>% 
+  filter(route_name == "A") %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+The number of ada compliant stations that serve A train.
+
+```{r}
+nyc_subway_tidy_df %>% 
+  filter(route_name == "A", ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
 
 ## Problem 3 
+
+Read in and tidy pol_months dataset. 
+
+```{r}
+pols_months_df <- 
+  read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(mon, sep = "-", into = c("year", "month", "day")) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.abb[month]) %>% 
+  pivot_longer(
+    cols = starts_with("prez"),
+    names_to = "president",
+    values_to = "result"
+  ) %>% 
+  mutate(president = recode(president, "prez_dem" = "dem", "prez_gop" = "gop")) %>% 
+  filter(result == 1) %>% 
+  select(-day, -result)
+```
+
+Read in and tidy snp dataset.
+
+```{r}
+snp_df <- 
+  read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(date, sep = "/", into = c("month", "day", "year")) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.abb[month]) %>% 
+  select(-day) %>% 
+  relocate(year)
+```
+
+Read in and tidy unemployment dataset. 
+
+```{r}
+uneply_df <- 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+    pivot_longer(
+    cols = Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+    ) %>% 
+  rename(year = Year) %>% 
+  mutate(year = as.character(year)) 
+```
+
+Merge snp and pols. 
+
+```{r}
+final_df  <- 
+  left_join(pols_months_df, snp_df, by = c("year", "month"))
+
+final_df <- 
+  left_join(final_df, uneply_df, by =  c("year", "month"))
+```
+
