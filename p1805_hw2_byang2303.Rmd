@@ -81,7 +81,7 @@ nyc_subway_df <-
   select(line: entry, vending, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE ))
 ```
-This data set contains information related to subway station in NYC, including line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance. To clean the data, 
+This data set contains information related to subway station in NYC, including line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, exit, ADA compliance, staffing, staff hours, and entrance location. As a start, I cleaned the variables names, selected interested variables and changed the "entry" from character to logical type. After these steps, the resulting dataset has `r nrow(nyc_subway_df)` rows, and `r ncol(nyc_subway_df)` columns. 
 
 The number of distinct stations.
 
