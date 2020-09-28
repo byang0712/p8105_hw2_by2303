@@ -94,6 +94,7 @@ The number of ADA compliant stations.
 
 ```{r}
 nyc_subway_df %>% 
+  distinct(line, station_name, .keep_all = TRUE) %>% 
   filter(ada == TRUE) %>% 
   nrow()
 ```
@@ -102,8 +103,9 @@ The proportion of station entrances without vending allow entrance.
 
 ```{r}
 nyc_subway_df %>% 
+  distinct(line, station_name, .keep_all = TRUE) %>% 
   filter(entry == TRUE, vending == "NO") %>% 
-  nrow() / nrow(nyc_subway_df)
+  nrow() / 466
 ```
 
 Reformat the dataset. 
@@ -125,7 +127,7 @@ nyc_subway_tidy_df <-
   )
 ```
 
-The number of distinct stations.
+The number of distinct stations that serves A train.
 
 ```{r}
 nyc_subway_tidy_df %>% 
