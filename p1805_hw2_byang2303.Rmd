@@ -74,8 +74,7 @@ Read the NYC Transit Subway Entrance And Exit Data
 
 ```{r}
 nyc_subway_df <- 
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", 
-           skip = 1) %>% 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", skip = 1) %>% 
   janitor::clean_names() %>% 
   select(line: entry, vending, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE ))
@@ -103,9 +102,8 @@ The proportion of station entrances without vending allow entrance.
 
 ```{r}
 nyc_subway_df %>% 
-  distinct(line, station_name, .keep_all = TRUE) %>% 
   filter(entry == TRUE, vending == "NO") %>% 
-  nrow() / 466
+  nrow() / nrow(filter(nyc_subway_df, vending == "NO"))
 ```
 
 Reformat the dataset. 
