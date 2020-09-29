@@ -74,7 +74,7 @@ Read the NYC Transit Subway Entrance And Exit Data
 
 ```{r}
 nyc_subway_df <- 
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", skip = 1) %>% 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
   select(line: entry, vending, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE ))
